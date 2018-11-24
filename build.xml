@@ -1,0 +1,58 @@
+<project name="rLTL Monitor" default="compile">
+
+	<!-- Sets paths -->
+	<property name="build.path" value="bin"/>
+
+
+	<!-- Define class path (all jars inside lib) -->
+	<path id="class.path">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+
+	<!-- Generates sources for parser and compiles all source files -->
+	<target name="compile">
+		<mkdir dir="${build.path}"/>
+		<javac srcdir="src" destdir="${build.path}" includeantruntime="false">
+			<classpath refid="class.path"/>
+		</javac>
+	</target>
+
+
+	<!-- Generates Javadoc of the sources -->
+	<target name="javadoc">
+		<javadoc packagenames="de.mpi_sws.rltlmonitor.*"
+			sourcepath="src"
+			defaultexcludes="yes"
+			destdir="docs/api"
+			author="no"
+			version="no"
+			use="true">
+			<classpath refid="class.path"/>
+			<link href="http://docs.oracle.com/javase/8/docs/api/"/>
+		</javadoc>
+	</target>
+
+
+	<!-- Generates a jar file of sources and binary files -->
+	<target name="jar" depends="compile">
+		<jar destfile="rltlmonitor.jar">
+			<fileset dir="${build.path}"/>
+			<fileset dir="src" />
+			<manifest>
+				<attribute name="Main-Class" value="de.mpi_sws.rltlmonitor.CommandLineInterface"/>
+			</manifest>
+		</jar>
+	</target>
+
+
+	<!-- Cleans all generated files -->
+	<target name="clean">
+		<delete dir="${build.path}" includeEmptyDirs="true"/>
+		<delete dir="docs" includeEmptyDirs="true"/>
+		<delete file="rltlmonitor.jar" />
+	</target>
+
+</project>
