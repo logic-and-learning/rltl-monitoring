@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import de.tum.in.naturals.bitset.BitSets;
@@ -97,16 +98,24 @@ public class Owl2Automatalib {
 	 *                     <code>0 <= bit <= 3</code>(
 	 * @return The Moore machine as described in the paper
 	 */
-	public static <S> FastMoore<BitSet, BitSet> toAutomatalib(Automaton<S, ?> owlAutomaton, int bit) {
+	public static FastMoore<BitSet, BitSet> toAutomatalib(Automaton<Object, ?> owlAutomaton, int bit) {
 
 		assert (owlAutomaton.initialStates().size() == 1);
 		assert (owlAutomaton.is(Automaton.Property.DETERMINISTIC));
 		assert (0 <= bit && bit <= 3);
 
 		//
+		// Complete Owl automaton
+		//
+		var owlAutomatonCompleted = Views.complete(owlAutomaton, new Object());
+		System.out.println("\n---------- Start Completed Owl automaton ----------");
+		System.out.println(owl.automaton.output.HoaPrinter.toString(owlAutomatonCompleted));
+		System.out.println("\n---------- End Completed Owl automaton ----------");
+
+		//
 		// Create alphabet
 		//
-		var owlAlphabet = BitSets.powerSet(owlAutomaton.factory().alphabetSize());
+		var owlAlphabet = BitSets.powerSet(owlAutomatonCompleted.factory().alphabetSize());
 
 		ArrayList<BitSet> list = new ArrayList<>(owlAlphabet.size());
 		for (var bits : owlAlphabet) {
@@ -122,8 +131,8 @@ public class Owl2Automatalib {
 		//
 		// Create states
 		//
-		HashMap<S, FastMooreState<BitSet>> stateMap = new HashMap<>(owlAutomaton.size());
-		for (S owlState : owlAutomaton.states()) {
+		HashMap<Object, FastMooreState<BitSet>> stateMap = new HashMap<>(owlAutomatonCompleted.size());
+		for (Object owlState : owlAutomatonCompleted.states()) {
 
 			// Create AutomatonLib states
 			var automatalibState = result.addState(new BitSet(4)); // We'll set the output later
@@ -136,27 +145,33 @@ public class Owl2Automatalib {
 		//
 		// Define output of states
 		//
-		for (var entry : stateMap.entrySet()) {
+		stateMap.forEach(new BiConsumer<Object, FastMooreState<BitSet>>() {
 
-			// Create view with given state as new initial state
-			var changedInitialStateAutomaton = Views.replaceInitialState(owlAutomaton, Set.of(entry.getKey()));
+			@Override
+			public void accept(Object owlState, FastMooreState<BitSet> automatalibState) {
 
-			// Check whether language from this state is empty
-			if (!EmptinessCheck.isEmpty(changedInitialStateAutomaton)) {
-				entry.getValue().getOutput().set(bit);
+				// Create view with given state as new initial state
+				var changedInitialStateAutomaton = Views.replaceInitialState(owlAutomatonCompleted, Set.of(owlState));
+
+				// Check whether language from this state is empty
+				if (!EmptinessCheck.isEmpty(changedInitialStateAutomaton)) {
+					automatalibState.getOutput().set(bit);
+				}
+
 			}
-		}
+
+		});
 
 		//
 		// Initial state
 		//
-		result.setInitialState(stateMap.get(owlAutomaton.initialStates().iterator().next()));
+		result.setInitialState(stateMap.get(owlAutomatonCompleted.onlyInitialState()));
 
 		//
 		// Create transitions
 		//
-		for (S owlState : owlAutomaton.states()) {
-			for (var entry : owlAutomaton.edgeMap(owlState).entrySet()) {
+		for (Object owlState : owlAutomatonCompleted.states()) {
+			for (var entry : owlAutomatonCompleted.edgeMap(owlState).entrySet()) {
 				entry.getValue().forEach(new Consumer<BitSet>() {
 
 					@Override

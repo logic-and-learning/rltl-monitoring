@@ -12,6 +12,8 @@ import org.mpi_sws.rltl.visitors.RLTL2LTLVisitor;
 
 import net.automatalib.automata.transout.impl.FastMoore;
 import net.automatalib.util.automata.Automata;
+import owl.run.DefaultEnvironment;
+import owl.translations.LTL2DAFunction;
 
 public class CommandLineInterface {
 
@@ -21,7 +23,7 @@ public class CommandLineInterface {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
-		
+
 		//
 		// Check command line arguments
 		//
@@ -81,8 +83,11 @@ public class CommandLineInterface {
 			var ltlString = visitor.expression2String(ltlExprs[bit]);
 			System.out.println("LTL formula is: " + ltlString);
 
-			var translator = new owl.translations.LTL2NAFunction(owl.run.DefaultEnvironment.standard(),
-					EnumSet.allOf(owl.translations.LTL2NAFunction.Constructions.class));
+			// var translator = new
+			// owl.translations.LTL2DAFunction(owl.run.DefaultEnvironment.standard(), false,
+			// EnumSet.allOf(owl.translations.LTL2DAFunction.Constructions.class));
+			var translator = new LTL2DAFunction(DefaultEnvironment.standard(), false,
+					EnumSet.of(LTL2DAFunction.Constructions.PARITY));
 
 			var owlAutomaton = owl.automaton.AutomatonUtil
 					.cast(translator.apply(owl.ltl.parser.LtlParser.parse(ltlString)));
