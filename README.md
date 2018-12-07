@@ -31,9 +31,13 @@ Constructing rLTL Monitors
 To construct an rLTL monitor, execute the following command in the root
 directory of the project:
 
-    java -cp 'rltlmonitor.jar:lib/*' de.mpi_sws.rltlmonitor.CommandLineInterface rLTL-formula
+    java -cp 'rltlmonitor.jar:lib/*' de.mpi_sws.rltlmonitor.CommandLineInterface logic formula
 
-The (only) argument `rLTL-formula` specifies  the rLTL formula for which the
-monitor is constructed. Note that the rLTL formula must be a single argument.
-Thus, you most likely need to enclose this argument with quotes
-(e.g., `'a U b'`).
+The tools requires two arguments:
+
+1) The argument `logic` and be either `rltl` or `ltl`. It specifies whether to
+construct an rLTL monitor or an LTL monitor.
+
+2) The argument `rLTL-formula` specifies the (r)LTL formula for which the
+monitor is constructed. Note that the formula must be a single argument. Thus,
+you most likely need to enclose this argument with quotes (e.g., `'a U b'`).
