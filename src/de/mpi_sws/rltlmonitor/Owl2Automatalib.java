@@ -83,31 +83,33 @@ public class Owl2Automatalib {
 	}
 
 	/**
-	 * Converts an Owl omega-automaton to an Automatalib Moore machine as described
-	 * in the paper. The parameter {@code bit} indicates to which bit of the rLTL
-	 * formula this Moore machine refers to. This information is used to set the
-	 * output accordingly. More precisely, the output is a BitSet containing
-	 * {@code bit} if and only if the language of the Owl automaton starting from
-	 * the given state is non-empty.
+	 * Converts an Owl ω-automaton to an Automatalib Moore machine as described in
+	 * the paper.
+	 * 
+	 * More precisely, the transition structure is copied (i.e., the resulting Moore
+	 * machine has the same transition structure). Moreover, the output of states is
+	 * defined as follows: if the language from a state of the ω-automaton is
+	 * non-empty, the output of the Moore machine is a singleton set containing the
+	 * argument {@code output}; otherwise, the output is the empty set.
 	 * <p>
 	 * The Owl automaton must be deterministic (in particular, it must have a unique
 	 * initial state).
 	 * 
-	 * @param owlAutomaton The Owl omega-automaton
-	 * @param bit          The bit to which this automaton belongs to (must satisfy
-	 *                     <code>0 <= bit <= 3</code>(
+	 * @param owlAutomaton The Owl ω-automaton
+	 * @param output       The output to set if the language from a state is
+	 *                     non-empty
 	 * @return The Moore machine as described in the paper
 	 */
-	public static FastMoore<BitSet, BitSet> toAutomatalib(Automaton<Object, ?> owlAutomaton, int bit) {
+	public static FastMoore<BitSet, BitSet> toAutomatalib(Automaton<Object, ?> owlAutomaton, int output) {
 
 		assert (owlAutomaton.initialStates().size() == 1);
 		assert (owlAutomaton.is(Automaton.Property.DETERMINISTIC));
-		assert (0 <= bit && bit <= 3);
+		assert (0 <= output && output <= 4);
 
 		//
 		// Complete Owl automaton
 		//
-		var owlAutomatonCompleted = Views.complete(owlAutomaton, new Object());
+		var owlAutomatonCompleted = Views.complete(owlAutomaton, new String("Sink"));
 		System.out.println("\n---------- Start Completed Owl automaton ----------");
 		System.out.println(owl.automaton.output.HoaPrinter.toString(owlAutomatonCompleted));
 		System.out.println("\n---------- End Completed Owl automaton ----------");
@@ -155,7 +157,7 @@ public class Owl2Automatalib {
 
 				// Check whether language from this state is empty
 				if (!EmptinessCheck.isEmpty(changedInitialStateAutomaton)) {
-					automatalibState.getOutput().set(bit);
+					automatalibState.getOutput().set(output);
 				}
 
 			}

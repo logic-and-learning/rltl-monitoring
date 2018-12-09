@@ -145,21 +145,42 @@ public class MonitorConstructor {
 		var ltlExprs = RLTL2LTLVisitor.convert(rLTLExpr);
 
 		//
+		// Convert LTL expression to Strings
+		//
+		var visitor = new PrettyPrintVisitor();
+
+		var ltlStrings = new String[] { visitor.expression2String(ltlExprs[0]), visitor.expression2String(ltlExprs[1]),
+				visitor.expression2String(ltlExprs[2]), visitor.expression2String(ltlExprs[3]) };
+
+		//
 		// Construct monitor
 		//
 		FastMoore<BitSet, BitSet> combinedMachine = null;
-		for (int bit = 0; bit < 4; ++bit) {
+		for (int truthValue = 0; truthValue < 5; ++truthValue) {
 
-			System.out.println("\n========== (bit=" + bit + ") ==========\n");
+			System.out.println("\n========== (truth value=" + truthValue + ") ==========\n");
+
+			//
+			// Generate LTL expression
+			//
+			String ltlString = null;
+			if (truthValue == 0) {
+				ltlString = ltlStrings[0];
+			} else if (truthValue == 1) {
+				ltlString = "!(" + ltlStrings[0] + ") & (" + ltlStrings[1] + ")";
+			} else if (truthValue == 2) {
+				ltlString = "!(" + ltlStrings[1] + ") & (" + ltlStrings[2] + ")";
+			} else if (truthValue == 3) {
+				ltlString = "!(" + ltlStrings[2] + ") & (" + ltlStrings[3] + ")";
+			} else {
+				ltlString = "!(" + ltlStrings[3] + ")";
+			}
+			assert (ltlString != null);
+			System.out.println("LTL formula is: " + ltlString);
 
 			//
 			// Convert LTL expression to Owl automaton
 			//
-			var visitor = new PrettyPrintVisitor();
-
-			var ltlString = visitor.expression2String(ltlExprs[bit]);
-			System.out.println("LTL formula is: " + ltlString);
-
 			// var translator = new
 			// owl.translations.LTL2DAFunction(owl.run.DefaultEnvironment.standard(), false,
 			// EnumSet.allOf(owl.translations.LTL2DAFunction.Constructions.class));
@@ -179,7 +200,7 @@ public class MonitorConstructor {
 			//
 			// Convert to Moore machine
 			//
-			var automatalibMachine = Owl2Automatalib.toAutomatalib(owlAutomaton, bit);
+			var automatalibMachine = Owl2Automatalib.toAutomatalib(owlAutomaton, truthValue);
 			System.out.println("\n---------- Start Moore machine ----------");
 			System.out.println(Owl2Automatalib.toDot(automatalibMachine));
 			System.out.println("---------- End Moore machine ----------");
@@ -195,7 +216,7 @@ public class MonitorConstructor {
 			//
 			// In first iteration, just store AutomataLib Moore machine
 			//
-			if (bit == 0) {
+			if (truthValue == 0) {
 				combinedMachine = automatalibMachine;
 			}
 
