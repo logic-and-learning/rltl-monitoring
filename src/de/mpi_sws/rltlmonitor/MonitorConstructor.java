@@ -3,7 +3,7 @@ package de.mpi_sws.rltlmonitor;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.mpi_sws.rltl.parser.LTLParser;
 import org.mpi_sws.rltl.parser.ParseException;
@@ -12,10 +12,11 @@ import org.mpi_sws.rltl.visitors.RLTL2LTLVisitor;
 
 import net.automatalib.automata.transout.impl.FastMoore;
 import net.automatalib.util.automata.Automata;
+import owl.automaton.Automaton;
 import owl.automaton.AutomatonUtil;
 import owl.ltl.parser.LtlParser;
 import owl.run.DefaultEnvironment;
-import owl.translations.LTL2DAFunction;
+import owl.translations.ltl2dpa.LTL2DPAFunction;
 
 /**
  * This class implements the (r)LTL monitor construction.
@@ -42,10 +43,14 @@ public class MonitorConstructor {
 		//
 		// Owl automaton for negated formula
 		//
-		var translator = new LTL2DAFunction(DefaultEnvironment.standard(), false,
-				EnumSet.of(LTL2DAFunction.Constructions.PARITY));
+		var environment = DefaultEnvironment.standard();
+		var translator = new LTL2DPAFunction(environment,
+				Set.of(LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE, LTL2DPAFunction.Configuration.COMPLETE,
+						LTL2DPAFunction.Configuration.EXISTS_SAFETY_CORE,
+						LTL2DPAFunction.Configuration.COMPRESS_COLOURS));
 
 		var negatedOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(negatedLTLFormula)));
+		assert (negatedOwlAutomaton.is(Automaton.Property.COMPLETE));
 		System.out.println("Negated formula: " + negatedLTLFormula);
 		System.out.println("\n---------- Start Owl automaton ----------");
 		System.out.println(owl.automaton.output.HoaPrinter.toString(negatedOwlAutomaton));
@@ -75,6 +80,7 @@ public class MonitorConstructor {
 		// Owl automaton for original formula
 		//
 		var originalOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(ltlFormula)));
+		assert (originalOwlAutomaton.is(Automaton.Property.COMPLETE));
 		System.out.println("Original formula: " + ltlFormula);
 		System.out.println("\n---------- Start Owl automaton ----------");
 		System.out.println(owl.automaton.output.HoaPrinter.toString(originalOwlAutomaton));
@@ -175,7 +181,6 @@ public class MonitorConstructor {
 			} else {
 				ltlString = "!(" + ltlStrings[3] + ")";
 			}
-			assert (ltlString != null);
 			System.out.println("LTL formula is: " + ltlString);
 
 			//
@@ -184,11 +189,17 @@ public class MonitorConstructor {
 			// var translator = new
 			// owl.translations.LTL2DAFunction(owl.run.DefaultEnvironment.standard(), false,
 			// EnumSet.allOf(owl.translations.LTL2DAFunction.Constructions.class));
-			var translator = new LTL2DAFunction(DefaultEnvironment.standard(), false,
-					EnumSet.of(LTL2DAFunction.Constructions.PARITY));
+			// var translator = new LTL2DAFunction(DefaultEnvironment.standard(), false,
+			// EnumSet.of(LTL2DAFunction.Constructions.RABIN));
+			var environment = DefaultEnvironment.standard();
+			var translator = new LTL2DPAFunction(environment,
+					Set.of(LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE, LTL2DPAFunction.Configuration.COMPLETE,
+							LTL2DPAFunction.Configuration.EXISTS_SAFETY_CORE,
+							LTL2DPAFunction.Configuration.COMPRESS_COLOURS));
 
 			var owlAutomaton = owl.automaton.AutomatonUtil
 					.cast(translator.apply(owl.ltl.parser.LtlParser.parse(ltlString)));
+			assert (owlAutomaton.is(Automaton.Property.COMPLETE));
 			System.out.println("\n---------- Start Owl automaton ----------");
 			System.out.println(owl.automaton.output.HoaPrinter.toString(owlAutomaton));
 			System.out.print("Alphabet: ");

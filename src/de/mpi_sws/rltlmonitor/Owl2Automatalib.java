@@ -107,17 +107,9 @@ public class Owl2Automatalib {
 		assert (0 <= output && output <= 4);
 
 		//
-		// Complete Owl automaton
-		//
-		var owlAutomatonCompleted = Views.complete(owlAutomaton, new String("Sink"));
-		System.out.println("\n---------- Start Completed Owl automaton ----------");
-		System.out.println(owl.automaton.output.HoaPrinter.toString(owlAutomatonCompleted));
-		System.out.println("\n---------- End Completed Owl automaton ----------");
-
-		//
 		// Create alphabet
 		//
-		var owlAlphabet = BitSets.powerSet(owlAutomatonCompleted.factory().alphabetSize());
+		var owlAlphabet = BitSets.powerSet(owlAutomaton.factory().alphabetSize());
 
 		ArrayList<BitSet> list = new ArrayList<>(owlAlphabet.size());
 		for (var bits : owlAlphabet) {
@@ -133,8 +125,8 @@ public class Owl2Automatalib {
 		//
 		// Create states
 		//
-		HashMap<Object, FastMooreState<BitSet>> stateMap = new HashMap<>(owlAutomatonCompleted.size());
-		for (Object owlState : owlAutomatonCompleted.states()) {
+		HashMap<Object, FastMooreState<BitSet>> stateMap = new HashMap<>(owlAutomaton.size());
+		for (Object owlState : owlAutomaton.states()) {
 
 			// Create AutomatonLib states
 			var automatalibState = result.addState(new BitSet(4)); // We'll set the output later
@@ -153,7 +145,7 @@ public class Owl2Automatalib {
 			public void accept(Object owlState, FastMooreState<BitSet> automatalibState) {
 
 				// Create view with given state as new initial state
-				var changedInitialStateAutomaton = Views.replaceInitialState(owlAutomatonCompleted, Set.of(owlState));
+				var changedInitialStateAutomaton = Views.replaceInitialState(owlAutomaton, Set.of(owlState));
 
 				// Check whether language from this state is empty
 				if (!EmptinessCheck.isEmpty(changedInitialStateAutomaton)) {
@@ -167,13 +159,13 @@ public class Owl2Automatalib {
 		//
 		// Initial state
 		//
-		result.setInitialState(stateMap.get(owlAutomatonCompleted.onlyInitialState()));
+		result.setInitialState(stateMap.get(owlAutomaton.onlyInitialState()));
 
 		//
 		// Create transitions
 		//
-		for (Object owlState : owlAutomatonCompleted.states()) {
-			for (var entry : owlAutomatonCompleted.edgeMap(owlState).entrySet()) {
+		for (Object owlState : owlAutomaton.states()) {
+			for (var entry : owlAutomaton.edgeMap(owlState).entrySet()) {
 				entry.getValue().forEach(new Consumer<BitSet>() {
 
 					@Override
