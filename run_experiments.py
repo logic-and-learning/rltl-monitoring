@@ -57,9 +57,9 @@ def ask_for_path(desc, dft):
     reply = input(f"The file {path_str} already exists. Do you want me to clear it [c], append the results [a], or quit [q]? ")
     if reply == "a":
       pass
-    if reply == "c":
+    elif reply == "c":
       open(path, "w").close # Open in truncation mode, close immediately.
-    if reply == "q":
+    else:
       print("Ok, thank you and have a pleasant week!")
       exit()
       
@@ -90,15 +90,44 @@ def handle_download():
     print(f"I will download formulas from {formula_url}.")
     payload = requests.get(formula_url).text.splitlines()
 
-    for line in payload:
-      if line.startswith("- "):
-        # Remove the `-` marker and transform into our format.
-        line = line[2:].replace("->", "=>").replace("<>", "F")
-        φ = line.replace("[]", "G").replace("&&", "&").replace("||", "|")
-        file.write(str(φ).strip() + "\n")
-
+    content = parse_raw_ltl_file(payload, file)
   return path_str
 
+
+"""
+  Parses the content provided and writes it into the file as comma-separated list.
+"""
+def parse_raw_ltl_file(content, file):
+  read_pattern = True
+  pattern = ""
+  for i, line in enumerate(content):
+        if line.startswith("PATTERN:"):
+          # Remove the `PATTERN:` marker.
+          pattern = line[len("PATTERN:"):].strip()
+          read_pattern = False
+        if line.startswith("- "):
+          # Remove the `-` marker and transform into our format.
+          line = line[2:].replace("->", "=>").replace("<>", "F ")
+          φ = line.replace("[]", "G ").replace("&&", "&").replace("||", "|")
+          φ = φ.replace("  ", " ") # Double spaces introduced by inconsistent spacing in the source.
+          # Write data to file.
+          if len(pattern) == 0 or read_pattern:
+            print("Invalid format in the LTL file. Maybe use an older revision?")
+            exit()
+          file.write(pattern + ", ")
+          file.write(str(i + 1) + ", ")
+          if φ == "G F (a => (c U d)":
+            φ = φ + ")"
+          if φ == "G F (a => F d))":
+            φ = φ[:-1]
+          file.write(str(φ).strip() + "\n")
+          read_pattern = True
+          pattern = ""
+
+        if line.startswith("@") or line.startswith("???"):
+          read_pattern = True
+          pattern = ""
+        
 
 """
   Builds the project if the user agrees.
@@ -122,6 +151,7 @@ def file_len(fname):
 
 # Obtain the paths to the formulas and the desired location of the output.
 [formula_path, stats_path] = prepare_files(sys.argv)
+
   
 # Ask the user whether we should build the project and do so.
 handle_build()
@@ -130,21 +160,30 @@ handle_build()
 num_formulas = file_len(formula_path)
 
 # Prepare the command for running the tool on a single formula.
-cmd = "java -cp 'rltlmonitor.jar:lib/*' de.mpi_sws.rltlmonitor.CommandLineInterface " 
+cmd = "java -ea -cp 'rltlmonitor.jar:lib/*' de.mpi_sws.rltlmonitor.CommandLineInterface " 
 cmd += f"-s {stats_path} "
 cmd += "both " 
 # Count the number of formulas already processed.
 i = 0 
 with open(formula_path, "r") as formulas:
   for line in formulas:
-    φ = line.strip() # Discard the newline character.
-    # Report progress after every 10th formula.
+    split = list(map(lambda x: x.strip(), line.split(",")))
+    if len(split) != 3:
+      print("Invalid format in the spec file. Fix please.")
+      exit()
+
+    # Write information about formula in stats output file before running the tool.
+    with open(stats_path, "a") as stats_file:    
+      stats_file.write(line.strip() + ", ")
+
+    # Report progress after every 5th formula.
     if i > 0 and i % 1 == 0:
       print(f"Progress: {i}/{num_formulas}.")
     # Finalize command.
+    [pattern, line_number, φ] = split
     next_cmd = cmd + "'" + φ + "'" + "> /dev/null"
     os.system(next_cmd)
     i += 1
 
-print("That's all for today! Good bye!")
+print("That's all for today, folks! Good bye!")
 
