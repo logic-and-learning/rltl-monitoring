@@ -95,9 +95,9 @@ public class CommandLineInterface {
 		f.createNewFile(); // Just in case it doesn't exist, yet.
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(f, true))) {
 			if (rltl != null && ltl != null) {
-				writer.write(String.valueOf(rltl.size()));
-				writer.write(", ");
 				writer.write(String.valueOf(ltl.size()));
+				writer.write(", ");
+				writer.write(String.valueOf(rltl.size()));
 			} else if (rltl != null) {
 				writer.write(String.valueOf(rltl.size()));
 			} else if (ltl != null) {
