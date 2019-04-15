@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Optional;
@@ -99,6 +100,12 @@ public class CommandLineInterface {
 
 			}
 
+//			// DEBUG
+//			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out, "UTF-8"))) {
+//				dumpStatsToWriter(writer, rltlmonitor, elapsedrLTLMonitorConstructionTime, ltlmonitor,
+//						elapsedLTLMonitorConstructionTime);
+//			}
+
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -134,30 +141,44 @@ public class CommandLineInterface {
 		//
 		// Number of outputs
 		//
-		HashSet<BitSet> outputs = new HashSet<>(10);
+		HashSet<BitSet> rltlMonitorOutputs = new HashSet<>(10);
 		if (rltlMonitor != null) {
 			rltlMonitor.forEach(new Consumer<FastMooreState<BitSet>>() {
 				@Override
 				public void accept(FastMooreState<BitSet> state) {
-					outputs.add((BitSet) state.getOutput().clone());
+					rltlMonitorOutputs.add((BitSet) state.getOutput().clone());
 				}
 
 			});
 		}
-		int rltlMonitorOutputs = outputs.size();
+		int numberOfrLTLMonitorOutputs = rltlMonitorOutputs.size();
 
-		outputs.clear();
+		HashSet<BitSet> ltlMonitorOutputs = new HashSet<>(10);
 		if (ltlMonitor != null) {
 			ltlMonitor.forEach(new Consumer<FastMooreState<BitSet>>() {
 
 				@Override
 				public void accept(FastMooreState<BitSet> state) {
-					outputs.add((BitSet) state.getOutput().clone());
+					ltlMonitorOutputs.add((BitSet) state.getOutput().clone());
 				}
 
 			});
 		}
-		int ltlMonitorOutputs = outputs.size();
+		int numberOfLTLMonitorOutputs = ltlMonitorOutputs.size();
+
+		//
+		// Is the monitor trivial?
+		// A monitor is trial if it has only the output ? or ????.
+		//
+		BitSet rltlQuestionmark = new BitSet();
+		rltlQuestionmark.set(0, 5, true); // Weird, to index needs to be one greater than desired
+		boolean rltlMonitorIsTrivial = false;
+		rltlMonitorIsTrivial = rltlMonitorOutputs.size() == 1 && rltlMonitorOutputs.contains(rltlQuestionmark);
+
+		BitSet ltlQuestionmark = new BitSet();
+		ltlQuestionmark.set(0, 2, true); // Weird, to index needs to be one greater than desired
+		boolean ltlMonitorIsTrivial = false;
+		ltlMonitorIsTrivial = ltlMonitorOutputs.size() == 1 && ltlMonitorOutputs.contains(ltlQuestionmark);
 
 		//
 		// Elapsed Time
@@ -173,11 +194,13 @@ public class CommandLineInterface {
 		if (ltlMonitor != null) {
 			writer.write(String.valueOf(ltlMonitorSize));
 			writer.write(",");
-			writer.write(String.valueOf(ltlMonitorOutputs));
+			writer.write(String.valueOf(numberOfLTLMonitorOutputs));
+			writer.write(",");
+			writer.write(String.valueOf(ltlMonitorIsTrivial));
 			writer.write(",");
 			writer.write(String.format("%.2f", floatElapsedTimeLTL));
 		} else {
-			writer.write(",,");
+			writer.write(",,,");
 		}
 
 		// rLTL monitor
@@ -185,11 +208,13 @@ public class CommandLineInterface {
 		if (rltlMonitor != null) {
 			writer.write(String.valueOf(rltlMonitorSize));
 			writer.write(",");
-			writer.write(String.valueOf(rltlMonitorOutputs));
+			writer.write(String.valueOf(numberOfrLTLMonitorOutputs));
+			writer.write(",");
+			writer.write(String.valueOf(rltlMonitorIsTrivial));
 			writer.write(",");
 			writer.write(String.format("%.2f", floatElapsedTimerLTL));
 		} else {
-			writer.write(",,");
+			writer.write(",,,");
 		}
 
 		writer.newLine();
