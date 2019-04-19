@@ -108,7 +108,7 @@ def parse_raw_ltl_file(content, file):
         if line.startswith("- "):
           # Remove the `-` marker and transform into our format.
           line = line[2:].replace("->", "=>").replace("<>", "F ")
-          φ = line.replace("[]", "G ").replace("&&", "&").replace("||", "|")
+          φ = line.replace("[]", "G ").replace("&&", "&").replace("||", "|").replace("tt", "disambiguated")
           φ = φ.replace("  ", " ") # Double spaces introduced by inconsistent spacing in the source.
           # Write data to file.
           if len(pattern) == 0 or read_pattern:
