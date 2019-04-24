@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Optional;
@@ -167,18 +166,17 @@ public class CommandLineInterface {
 		int numberOfLTLMonitorOutputs = ltlMonitorOutputs.size();
 
 		//
-		// Is the monitor trivial?
-		// A monitor is trial if it has only the output ? or ????.
+		// Is the property monitorable?
+		// A property is not monitorable if the monitor has a single state whose output
+		// is/contains a ?
 		//
-		BitSet rltlQuestionmark = new BitSet();
-		rltlQuestionmark.set(0, 5, true); // Weird, to index needs to be one greater than desired
-		boolean rltlMonitorIsTrivial = false;
-		rltlMonitorIsTrivial = rltlMonitorOutputs.size() == 1 && rltlMonitorOutputs.contains(rltlQuestionmark);
+		assert (rltlMonitorOutputs.size() > 0 && rltlMonitorOutputs.size() <= rltlMonitor.size());
+		boolean propertyIsrLTLMonitorable = !(rltlMonitor.size() == 1
+				&& rltlMonitorOutputs.iterator().next().cardinality() != 1);
 
-		BitSet ltlQuestionmark = new BitSet();
-		ltlQuestionmark.set(0, 2, true); // Weird, to index needs to be one greater than desired
-		boolean ltlMonitorIsTrivial = false;
-		ltlMonitorIsTrivial = ltlMonitorOutputs.size() == 1 && ltlMonitorOutputs.contains(ltlQuestionmark);
+		assert (ltlMonitorOutputs.size() > 0 && ltlMonitorOutputs.size() <= ltlMonitor.size());
+		boolean propertyIsLTLMonitorable = !(ltlMonitor.size() == 1
+				&& ltlMonitorOutputs.iterator().next().cardinality() == 2);
 
 		//
 		// Elapsed Time
@@ -196,7 +194,7 @@ public class CommandLineInterface {
 			writer.write(",");
 			writer.write(String.valueOf(numberOfLTLMonitorOutputs));
 			writer.write(",");
-			writer.write(String.valueOf(ltlMonitorIsTrivial));
+			writer.write(String.valueOf(propertyIsLTLMonitorable));
 			writer.write(",");
 			writer.write(String.format("%.2f", floatElapsedTimeLTL));
 		} else {
@@ -210,7 +208,7 @@ public class CommandLineInterface {
 			writer.write(",");
 			writer.write(String.valueOf(numberOfrLTLMonitorOutputs));
 			writer.write(",");
-			writer.write(String.valueOf(rltlMonitorIsTrivial));
+			writer.write(String.valueOf(propertyIsrLTLMonitorable));
 			writer.write(",");
 			writer.write(String.format("%.2f", floatElapsedTimerLTL));
 		} else {

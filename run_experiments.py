@@ -105,7 +105,7 @@ def parse_raw_ltl_file(content, file):
           # Remove the `PATTERN:` marker.
           pattern = line[len("PATTERN:"):].strip()
           read_pattern = False
-        if line.startswith("- "):
+        if line.startswith("- ") or line.startswith("@ "):
           # Remove the `-` marker and transform into our format.
           line = line[2:].replace("->", "=>").replace("<>", "F ")
           φ = line.replace("[]", "G ").replace("&&", "&").replace("||", "|").replace("tt", "disambiguated")
@@ -124,7 +124,7 @@ def parse_raw_ltl_file(content, file):
           read_pattern = True
           pattern = ""
 
-        if line.startswith("@") or line.startswith("???"):
+        if line.startswith("???"):
           read_pattern = True
           pattern = ""
         
