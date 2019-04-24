@@ -1,6 +1,8 @@
 package de.mpi_sws.rltlmonitor;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 import java.util.Set;
@@ -32,13 +34,21 @@ public class MonitorConstructor {
 	 * 
 	 * @param ltlFormula The LTL formula to construct the monitor from
 	 * @return the unique LTL monitor corresponding to the given LTL formula
+	 * @throws ParseException 
 	 */
-	public static FastMoore<BitSet, BitSet> constructLTLMonitor(String ltlFormula) {
+	public static FastMoore<BitSet, BitSet> constructLTLMonitor(String ltlFormula) throws ParseException {
 
+		//
+		// Use the rLTL2LTL parser in order to avoid inconsistencies in operator precedence
+		//
+		LTLParser parser = new LTLParser(new BufferedReader(new StringReader(ltlFormula)));
+		var expr = parser.expression();
+		var parsedLTLFormula = (new PrettyPrintVisitor()).expression2String(expr);
+		
 		//
 		// Negate LTL formula
 		//
-		String negatedLTLFormula = "!(" + ltlFormula + ")";
+		String negatedLTLFormula = "!(" + parsedLTLFormula + ")";
 
 		//
 		// Owl automaton for negated formula
@@ -79,9 +89,9 @@ public class MonitorConstructor {
 		//
 		// Owl automaton for original formula
 		//
-		var originalOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(ltlFormula)));
+		var originalOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(parsedLTLFormula)));
 		assert (originalOwlAutomaton.is(Automaton.Property.COMPLETE));
-		System.out.println("Original formula: " + ltlFormula);
+		System.out.println("Original formula: " + parsedLTLFormula);
 		System.out.println("\n---------- Start Owl automaton ----------");
 		System.out.println(owl.automaton.output.HoaPrinter.toString(originalOwlAutomaton));
 		System.out.print("Alphabet: ");
@@ -141,8 +151,6 @@ public class MonitorConstructor {
 		// Parse rLTL expressions
 		//
 		var parser = new LTLParser(new ByteArrayInputStream(rLTLFormula.getBytes("UTF-8")));
-
-		@SuppressWarnings("static-access")
 		var rLTLExpr = parser.expression();
 
 		//
