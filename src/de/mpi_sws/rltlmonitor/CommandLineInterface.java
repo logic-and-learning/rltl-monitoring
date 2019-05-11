@@ -108,6 +108,9 @@ public class CommandLineInterface {
 		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 			System.exit(1);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 
 	}
@@ -126,10 +129,11 @@ public class CommandLineInterface {
 	 * @param elapsedLTLMonitorConstructionTime  time required to construct the LTL
 	 *                                           monitor
 	 * @throws IOException
+	 * @throws RuntimeException
 	 */
 	static void dumpStatsToWriter(BufferedWriter writer, FastMoore<BitSet, BitSet> rltlMonitor,
 			long elapsedrLTLMonitorConstructionTime, FastMoore<BitSet, BitSet> ltlMonitor,
-			long elapsedLTLMonitorConstructionTime) throws IOException {
+			long elapsedLTLMonitorConstructionTime) throws RuntimeException, IOException {
 
 		//
 		// Size of monitors
@@ -166,19 +170,6 @@ public class CommandLineInterface {
 		int numberOfLTLMonitorOutputs = ltlMonitorOutputs.size();
 
 		//
-		// Is the property monitorable?
-		// A property is not monitorable if the monitor has a single state whose output
-		// is/contains a ?
-		//
-		assert (rltlMonitorOutputs.size() > 0 && rltlMonitorOutputs.size() <= rltlMonitor.size());
-		boolean propertyIsrLTLMonitorable = !(rltlMonitor.size() == 1
-				&& rltlMonitorOutputs.iterator().next().cardinality() != 1);
-
-		assert (ltlMonitorOutputs.size() > 0 && ltlMonitorOutputs.size() <= ltlMonitor.size());
-		boolean propertyIsLTLMonitorable = !(ltlMonitor.size() == 1
-				&& ltlMonitorOutputs.iterator().next().cardinality() == 2);
-
-		//
 		// Elapsed Time
 		//
 		float floatElapsedTimerLTL = (float) (elapsedrLTLMonitorConstructionTime / 1000) / 1000000f;
@@ -194,7 +185,7 @@ public class CommandLineInterface {
 			writer.write(",");
 			writer.write(String.valueOf(numberOfLTLMonitorOutputs));
 			writer.write(",");
-			writer.write(String.valueOf(propertyIsLTLMonitorable));
+			writer.write(String.valueOf(isMonitorable(ltlMonitor, false)));
 			writer.write(",");
 			writer.write(String.format("%.2f", floatElapsedTimeLTL));
 		} else {
@@ -208,7 +199,7 @@ public class CommandLineInterface {
 			writer.write(",");
 			writer.write(String.valueOf(numberOfrLTLMonitorOutputs));
 			writer.write(",");
-			writer.write(String.valueOf(propertyIsrLTLMonitorable));
+			writer.write(String.valueOf(isMonitorable(rltlMonitor, true)));
 			writer.write(",");
 			writer.write(String.format("%.2f", floatElapsedTimerLTL));
 		} else {
@@ -219,6 +210,43 @@ public class CommandLineInterface {
 
 	}
 
+	// Assumes that the monitor is minimized!
+	public static boolean isMonitorable(FastMoore<BitSet, BitSet> monitor, boolean isrLTL) throws RuntimeException {
+		
+		int maxBit = isrLTL ? 4 : 1;
+		
+		for (var state : monitor.getStates()) {
+
+			// Skip if output is not ????
+			if (!(state.getOutput().get(0) && state.getOutput().get(maxBit))) {
+				continue;
+			}
+
+			// Check if state is a self loop
+			boolean is_sink_state = true;
+			for (var bits : monitor.getInputAlphabet()) {
+
+				var successor = monitor.getSuccessor(state, bits);
+
+				if (successor == null) {
+					throw new RuntimeException("Monitor is not complete");
+				} else if (!successor.equals(state)) {
+					is_sink_state = false;
+					break;
+				}
+
+			}
+
+			if (is_sink_state) {
+				return false;
+			}
+
+		}
+		
+		return true;
+		
+	}
+	
 	/**
 	 * Parses and returns command line arguments.
 	 * 
