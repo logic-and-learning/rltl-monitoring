@@ -123,57 +123,17 @@ public class CommandLineInterface {
 	 * 
 	 * @param writer                             the writer to write to
 	 * @param rltlMonitor                        an rLTL monitor
-	 * @param elapsedrLTLMonitorConstructionTime time required to construct the rLTL
+	 * @param rltlMonitorConstructionTime time required to construct the rLTL
 	 *                                           monitor
 	 * @param ltlMonitor                         an LTL monitor
-	 * @param elapsedLTLMonitorConstructionTime  time required to construct the LTL
+	 * @param ltlMonitorConstructionTime  time required to construct the LTL
 	 *                                           monitor
 	 * @throws IOException
 	 * @throws RuntimeException
 	 */
 	static void dumpStatsToWriter(BufferedWriter writer, FastMoore<BitSet, BitSet> rltlMonitor,
-			long elapsedrLTLMonitorConstructionTime, FastMoore<BitSet, BitSet> ltlMonitor,
-			long elapsedLTLMonitorConstructionTime) throws RuntimeException, IOException {
-
-		//
-		// Size of monitors
-		//
-		int rltlMonitorSize = rltlMonitor != null ? rltlMonitor.size() : 0;
-		int ltlMonitorSize = ltlMonitor != null ? ltlMonitor.size() : 0;
-
-		//
-		// Number of outputs
-		//
-		HashSet<BitSet> rltlMonitorOutputs = new HashSet<>(10);
-		if (rltlMonitor != null) {
-			rltlMonitor.forEach(new Consumer<FastMooreState<BitSet>>() {
-				@Override
-				public void accept(FastMooreState<BitSet> state) {
-					rltlMonitorOutputs.add((BitSet) state.getOutput().clone());
-				}
-
-			});
-		}
-		int numberOfrLTLMonitorOutputs = rltlMonitorOutputs.size();
-
-		HashSet<BitSet> ltlMonitorOutputs = new HashSet<>(10);
-		if (ltlMonitor != null) {
-			ltlMonitor.forEach(new Consumer<FastMooreState<BitSet>>() {
-
-				@Override
-				public void accept(FastMooreState<BitSet> state) {
-					ltlMonitorOutputs.add((BitSet) state.getOutput().clone());
-				}
-
-			});
-		}
-		int numberOfLTLMonitorOutputs = ltlMonitorOutputs.size();
-
-		//
-		// Elapsed Time
-		//
-		float floatElapsedTimerLTL = (float) (elapsedrLTLMonitorConstructionTime / 1000) / 1000000f;
-		float floatElapsedTimeLTL = (float) (elapsedLTLMonitorConstructionTime / 1000) / 1000000f;
+			long rltlMonitorConstructionTime, FastMoore<BitSet, BitSet> ltlMonitor,
+			long ltlMonitorConstructionTime) throws RuntimeException, IOException {
 
 		//
 		// Dump statistics to stream
@@ -181,13 +141,32 @@ public class CommandLineInterface {
 
 		// LTL Monitor
 		if (ltlMonitor != null) {
-			writer.write(String.valueOf(ltlMonitorSize));
+			
+			// Number of outputs 
+			HashSet<BitSet> ltlMonitorOutputs = new HashSet<>(10);
+			if (ltlMonitor != null) {
+				ltlMonitor.forEach(new Consumer<FastMooreState<BitSet>>() {
+
+					@Override
+					public void accept(FastMooreState<BitSet> state) {
+						ltlMonitorOutputs.add((BitSet) state.getOutput().clone());
+					}
+
+				});
+			}
+			
+			// Construction time
+			float ltlConstructionTimeInSeconds = (float) (ltlMonitorConstructionTime / 1000) / 1000000f;
+			
+			// Write
+			writer.write(String.valueOf(ltlMonitor.size()));
 			writer.write(",");
-			writer.write(String.valueOf(numberOfLTLMonitorOutputs));
+			writer.write(String.valueOf(ltlMonitorOutputs.size()));
 			writer.write(",");
 			writer.write(String.valueOf(isMonitorable(ltlMonitor, false)));
 			writer.write(",");
-			writer.write(String.format("%.2f", floatElapsedTimeLTL));
+			writer.write(String.format("%.2f", ltlConstructionTimeInSeconds));
+			
 		} else {
 			writer.write(",,,");
 		}
@@ -195,13 +174,31 @@ public class CommandLineInterface {
 		// rLTL monitor
 		writer.write(",");
 		if (rltlMonitor != null) {
-			writer.write(String.valueOf(rltlMonitorSize));
+			
+			// Number of outputs
+			HashSet<BitSet> rltlMonitorOutputs = new HashSet<>(10);
+			if (rltlMonitor != null) {
+				rltlMonitor.forEach(new Consumer<FastMooreState<BitSet>>() {
+					@Override
+					public void accept(FastMooreState<BitSet> state) {
+						rltlMonitorOutputs.add((BitSet) state.getOutput().clone());
+					}
+
+				});
+			}
+			
+			// Construction time
+			float rltlConstructionTimeInSeconds = (float) (rltlMonitorConstructionTime / 1000) / 1000000f;
+			
+			// Write
+			writer.write(String.valueOf(rltlMonitor.size()));
 			writer.write(",");
-			writer.write(String.valueOf(numberOfrLTLMonitorOutputs));
+			writer.write(String.valueOf(rltlMonitorOutputs.size()));
 			writer.write(",");
 			writer.write(String.valueOf(isMonitorable(rltlMonitor, true)));
 			writer.write(",");
-			writer.write(String.format("%.2f", floatElapsedTimerLTL));
+			writer.write(String.format("%.2f", rltlConstructionTimeInSeconds));
+			
 		} else {
 			writer.write(",,,");
 		}
