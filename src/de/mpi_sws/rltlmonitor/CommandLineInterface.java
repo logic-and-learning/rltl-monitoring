@@ -16,8 +16,6 @@ import net.automatalib.automata.transout.impl.FastMooreState;
 
 /**
  * Command line interface for the (r)LTL monitor constructor.
- * 
- * @author Daniel Neider
  *
  */
 public class CommandLineInterface {
@@ -313,8 +311,6 @@ public class CommandLineInterface {
 
 	/**
 	 * Enumeration defining for which logic a monitor is supposed to be constructed.
-	 * 
-	 * @author Maximilian Schwenger
 	 *
 	 */
 	static enum Logic {
@@ -323,8 +319,6 @@ public class CommandLineInterface {
 
 	/**
 	 * Object representing the command line arguments.
-	 * 
-	 * @author Maximilian Schwenger
 	 *
 	 */
 	static class Config {

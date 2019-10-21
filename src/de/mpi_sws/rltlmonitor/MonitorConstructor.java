@@ -23,8 +23,6 @@ import owl.translations.ltl2dpa.LTL2DPAFunction;
 /**
  * This class implements the (r)LTL monitor construction.
  * 
- * @author Daniel Neider
- *
  */
 public class MonitorConstructor {
 
