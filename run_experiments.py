@@ -6,11 +6,6 @@ import tempfile
 import os
 
 
-# TODOs: 
-# * Keep more information after downloading to fill in all fields of the table.
-# * Better prompting for single character replies.
-# * Check whether /dev/null is unix specific.
-
 """
   Uses the command line arguments and user interaction to prepare the
   formula and statistics files.
@@ -79,7 +74,7 @@ def handle_download():
     import requests
   except ImportError:
     print("It seems like you do not have `requests` installed.")
-    print("Run `pip install requests` and try again.")
+    print("Run `pip install requests` or `pip3 install requests` and try again.")
     exit()
 
   path_str = ask_for_path("the specs", "specs.ltl")
@@ -166,6 +161,10 @@ cmd += "both "
 # Count the number of formulas already processed.
 i = 0 
 with open(formula_path, "r") as formulas:
+  # Write CSV header in statistics file.
+  with open(stats_path, "a") as stats_file:    
+    stats_file.write("Name,Line,Formula,LTL_Monitor_States,LTL_Different_Verdicts,LTL_Outputs_Monitorable?,LTL_Time_in_s,rLTL_Monitor_States,rLTL_Different_Verdicts,rLTL_Outputs_Monitorable?,rLTL_Time_in_s\n")
+    
   for line in formulas:
     split = list(map(lambda x: x.strip(), line.split(",")))
     if len(split) != 3:
@@ -176,14 +175,14 @@ with open(formula_path, "r") as formulas:
     with open(stats_path, "a") as stats_file:    
       stats_file.write(line.strip() + ", ")
 
-    # Report progress after every 5th formula.
-    if i > 0 and i % 1 == 0:
-      print(f"Progress: {i}/{num_formulas}.")
+    print(f"Progress: {i}/{num_formulas}.")
+
     # Finalize command.
     [pattern, line_number, φ] = split
     next_cmd = cmd + "'" + φ + "'" + "> /dev/null"
     os.system(next_cmd)
     i += 1
+    break
 
-print("That's all for today, folks! Good bye!")
+print(f"All done!\nCheck out the results in {stats_path}.")
 
