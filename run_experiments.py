@@ -182,7 +182,6 @@ with open(formula_path, "r") as formulas:
     next_cmd = cmd + "'" + φ + "'" + "> /dev/null"
     os.system(next_cmd)
     i += 1
-    break
 
 print(f"All done!\nCheck out the results in {stats_path}.")
 
