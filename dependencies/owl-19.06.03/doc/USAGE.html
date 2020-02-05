@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>USAGE</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1>Usage and Integration</h1>
+<h2>Dedicated Tools</h2>
+<p>Owl comes with a variety of dedicated command-line tools originating from Rabinizer and Delag. The tools include usage instructions that can be accessed with the <code>--help</code> argument. The following tools are included:</p>
+<ul>
+<li><code>ltl2nba</code>, <code>ltl2ngba</code>: LTL to N(G)BA translations, based on <a href="Javier%20Esparza,%20Jan%20Kretínský,%20Salomon%20Sickert:">1</a>.</li>
+<li><code>ltl2ldba</code>, <code>ltl2ldgba</code>: LTL to LD(G)BA translations, based on <a href="Javier%20Esparza,%20Jan%20Kretínský,%20Salomon%20Sickert:">1</a> (symmetric) and on <a href="Salomon%20Sickert,%20Javier%20Esparza,%20Stefan%20Jaax,%20Jan%20Kretínský:">2</a> (asymmetric).</li>
+<li><code>ltl2dra</code>, <code>ltl2dgra</code>: LTL to D(G)RA translations, based on <a href="Javier%20Esparza,%20Jan%20Kretínský,%20Salomon%20Sickert:">1</a> (symmetric) and on <a href="Javier%20Esparza,%20Jan%20Kretínský,%20Salomon%20Sickert:">3</a> (asymmetric).</li>
+<li><code>ltl2dpa</code>: LTL to DPA translation, based on <a href="Javier%20Esparza,%20Jan%20Kretínský,%20Salomon%20Sickert:">1</a>, <a href="Salomon%20Sickert,%20Javier%20Esparza,%20Stefan%20Jaax,%20Jan%20Kretínský:">2</a>, <a href="Javier%20Esparza,%20Jan%20Kretínský,%20Jean-François%20Raskin,%20Salomon%20Sickert:">4</a>. The intermediate construction (symmetric, asymmetric) can be selected with <code>-a</code> or <code>-s</code>.</li>
+<li><code>delag</code>: LTL to DELA translation, based on <a href="David%20Müller,%20Salomon%20Sickert:">5</a>.</li>
+<li><code>ltl2da</code>: Meta-translation that selects heuristically the deterministic automaton construction yielding the smallest states space.</li>
+<li><code>ltl2na</code>: Meta-translation that selects heuristically the nondeterministic automaton construction yielding the smallest states space.</li>
+<li><code>nba2ldba</code>: NBA to LDBA translation.</li>
+<li><code>nba2dpa</code>: NBA to DPA translation, based on <a href="Javier%20Esparza,%20Jan%20Kretínský,%20Jean-François%20Raskin,%20Salomon%20Sickert:">4</a>.</li>
+<li><code>dra2dpa</code>: DRA to DPA translation, based on <a href="Jan%20Kretínský,%20Tobias%20Meggendorfer,%20Clara%20Waldmann,%20Maximilian%20Weininger:">6</a>.</li>
+</ul>
+<p><strong>Abbreviations:</strong></p>
+<ul>
+<li>LTL: Linear Temporal Logic</li>
+<li>NBA: Non-deterministic Büchi Automaton</li>
+<li>DGRA: Deterministic generalized Rabin Automaton</li>
+<li>DRA: Deterministic Rabin Automaton</li>
+<li>LDBA: Limit-deterministic Büchi Automaton</li>
+<li>DPA: Deterministic Parity Automaton</li>
+<li>DELA: Deterministic Emerson-Lei Automaton</li>
+</ul>
+<p><strong>Literature:</strong></p>
+<pre><code> One Theorem to Rule Them All: A Unified Translation of LTL into ω-Automata. LICS 2018</code></pre>
+<pre><code> Limit-Deterministic Büchi Automata for Linear Temporal Logic. CAV 2016</code></pre>
+<pre><code> From LTL to deterministic automata - A safraless compositional approach. Formal Methods in System Design</code></pre>
+<pre><code> From LTL and Limit-Deterministic Büchi Automata to Deterministic Parity Automata. TACAS 2017</code></pre>
+<pre><code> LTL to Deterministic Emerson-Lei Automata. GandALF 2017</code></pre>
+<pre><code> Index Appearance Record for Transforming Rabin Automata into Parity Automata. TACAS 2017.</code></pre>
+<h3>Options</h3>
+<p>Each tool accepts specific command line options, which can be listed via <code>--help</code>. Additionally, the following set of common options is understood by all tools. Due to implementation details, grouping of the options is necessary, i.e. all global options have to be specified first, followed by all input options, and finally tool-specific options can be given.</p>
+<p><strong>Global options:</strong></p>
+<ul>
+<li><code>-v</code> or <code>--version</code>: Print the name of the tool an the version.</li>
+<li><code>--annotations</code>: Gather additional, human-readable information where possible. For example, the <code>ltl2ldba</code> and <code>ltl2dgra</code> constructions will gather a readable representation of the semantic state labels created by the construction.</li>
+<li><code>-i INPUT</code>: Pass <code>INPUT</code> as input to the tool</li>
+<li><code>-I FILE</code>: Pass the contents of <code>FILE</code> to the tool</li>
+<li><code>-O FILE</code>: Write the output to <code>FILE</code></li>
+<li><code>-w count</code>: Use <code>count</code> workers to process multiple inputs in parallel. Specify <code>-1</code> to use all available processors and <code>0</code> for blocking, direct execution.</li>
+</ul>
+<p>See the <a href="FORMATS.html">format descriptions</a> for a description of accepted inputs. Additionally, as soon as an unmatched argument is encountered, this and all following arguments will be interpreted as input. For example, <code>ltl2dpa &quot;F G a&quot;</code> is equivalent to <code>ltl2dpa -i &quot;F G a&quot;</code>.</p>
+<h2>Extended command line syntax</h2>
+<p>Owl comes with a flexible command line interface intended to aid rapid development and prototyping of various constructions, explained here. To give full control over the translation process to the user, it offers a verbose, modular way of specifying a particular tool-chain. This is achieved by means of multiple building blocks, which are connected together to create the desired translation. These &quot;building blocks&quot; come in three different flavours, namely input parsers, transformers, and output writers, all of which are pluggable and extensible.</p>
+<p>These three blocks are, as their names suggest, responsible for parsing input, applying operations to objects, and serializing the results to the desired format, respectively. We refer to a sequence of a parser, multiple transformers and an output writer as &quot;pipeline&quot;.</p>
+<p>Once configured, a pipeline is passed to an executor, which sets up the input/output behaviour and actually executing the pipeline. Usually, users will be content with reading from standard input or a file, which is handled by the default executor <code>owl</code>. Other possibilities, like a network server, will be mentioned later.</p>
+<h3>Basic usage</h3>
+<p>This approach is explained through a simple, incremental example. To begin with, we chain an LTL parser to the <code>ltl2dpa</code> construction and output the resulting automaton in the HOA format by</p>
+<pre><code>% owl  ltl --- ltl2dpa --- hoa</code></pre>
+<p>Fixed input can be specified with <code>-i &quot;&lt;input&gt;&quot;</code>, while <code>-I &quot;&lt;input.file&gt;&quot;</code> reads the given file. For example:</p>
+<pre><code>% owl -i &quot;F G a&quot; ltl --- ltl2dpa --- hoa</code></pre>
+<p>Similarly, output is written to a file with <code>-O &quot;&lt;output.file&gt;&quot;</code></p>
+<p>To additionally pre-process the input formula and minimize the result automaton, one simply adds more transformers to the pipeline</p>
+<pre><code>% owl  ltl --- simplify-ltl --- ltl2dpa --- minimize-aut --- hoa</code></pre>
+<p>For research purposes, one may be interested in what exactly happens during the intermediate steps, for example how the rewritten formula looks like, or how large the automaton is prior to the minimization. This data could be obtained by executing several different configurations, which is cumbersome and time-consuming for large data-sets. Instead, a seamless meta-data collection during the execution process is offered. For example, to obtain the above numbers in one execution, write</p>
+<pre><code>% owl  ltl --- simplify-ltl --- string --- ltl2dpa --- aut-stat --format &quot;%S/%C/%A&quot; --- minimize-aut --- hoa</code></pre>
+<p>Owl will now output the rewritten formula plus the amount of states, number of SCCs and number of acceptance sets for each input to <code>stderr</code> (by default).</p>
+<h3>Extending the Framework</h3>
+<p>Often, a researcher might not only be interested in how the existing operations performs, but rather how a new implementation behaves. By simply delegating to an external translator, existing implementations can easily be integrated in such a pipeline. For example, translation can be delegated to Rabinizer 3.1 by</p>
+<pre><code>% owl  ltl --- simplify-ltl --- ltl2aut-ext --tool &quot;run-rabinizer.sh %f&quot; --- minimize-aut --- hoa</code></pre>
+<p>The real strength of this framework comes from its flexibility. The command-line parser is completely pluggable and written without explicitly referencing any implementation. In order to add a new algorithm, one simply has to provide a name (as, e.g., <code>ltl2nba</code>), an optional set of command line options and a way of obtaining the configured translator from the parsed options. For example, to add a new construction called <code>ltl2nba</code> with a <code>--fast</code> flag, the whole description necessary is as follows:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">final</span> TransformerParser CLI_SETTINGS = ImmutableTransformerParser.<span class="fu">builder</span>()</a>
+<a class="sourceLine" id="cb12-2" title="2">    .<span class="fu">key</span>(<span class="st">&quot;ltl2nba&quot;</span>)</a>
+<a class="sourceLine" id="cb12-3" title="3">    .<span class="fu">description</span>(<span class="st">&quot;Translates LTL to NBA really fast&quot;</span>)</a>
+<a class="sourceLine" id="cb12-4" title="4">    .<span class="fu">optionsDirect</span>(<span class="kw">new</span> <span class="fu">Options</span>()</a>
+<a class="sourceLine" id="cb12-5" title="5">      .<span class="fu">addOption</span>(<span class="st">&quot;f&quot;</span>, <span class="st">&quot;fast&quot;</span>, <span class="kw">false</span>, <span class="st">&quot;Turn on fast mode&quot;</span>))</a>
+<a class="sourceLine" id="cb12-6" title="6">    .<span class="fu">parser</span>(settings -&gt; {</a>
+<a class="sourceLine" id="cb12-7" title="7">      <span class="dt">boolean</span> fast = settings.<span class="fu">hasOption</span>(<span class="st">&quot;fast&quot;</span>);</a>
+<a class="sourceLine" id="cb12-8" title="8">      <span class="kw">return</span> environment -&gt; (input, context) -&gt;</a>
+<a class="sourceLine" id="cb12-9" title="9">        LTL2NBA.<span class="fu">apply</span>((LabelledFormula) input, fast, environment)</a>
+<a class="sourceLine" id="cb12-10" title="10">    .<span class="fu">build</span>();</a></code></pre></div>
+<p>After registering these settings with a one-line call, the tool can now be used exactly as <code>ltl2dpa</code> before. Additionally, the tool is automatically integrated into the <code>--help</code> output of <code>Owl</code>, without requiring further interaction from the developer. Parsers and serializers can be registered with the same kind of specification.</p>
+<h3>Advanced Usage</h3>
+<p>Some advanced features are:</p>
+<ul>
+<li>Dedicated tools can easily be created by delegating to the generic framework. For example, <code>ltl2ldba</code> is created by the following snippet. This automatically sets up command line argument processing, input / output parsing, help printing, etc.</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode java"><code class="sourceCode java"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span>(<span class="bu">String</span><span class="kw">... </span>args) {</a>
+<a class="sourceLine" id="cb13-2" title="2"> PartialConfigurationParser.<span class="fu">run</span>(args, PartialModuleConfiguration.<span class="fu">builder</span>(<span class="st">&quot;ltl2ldba&quot;</span>)</a>
+<a class="sourceLine" id="cb13-3" title="3">   .<span class="fu">reader</span>(InputReaders.<span class="fu">LTL</span>)</a>
+<a class="sourceLine" id="cb13-4" title="4">   .<span class="fu">addTransformer</span>(Transformers.<span class="fu">LTL_SIMPLIFIER</span>)</a>
+<a class="sourceLine" id="cb13-5" title="5">   .<span class="fu">addTransformer</span>(LTL2LDBACliParser.<span class="fu">INSTANCE</span>)</a>
+<a class="sourceLine" id="cb13-6" title="6">   .<span class="fu">writer</span>(OutputWriters.<span class="fu">HOA</span>)</a>
+<a class="sourceLine" id="cb13-7" title="7">   .<span class="fu">build</span>());</a>
+<a class="sourceLine" id="cb13-8" title="8">}</a></code></pre></div>
+<ul>
+<li>The <em>server mode</em> listens on a given address and port for incoming TCP connections. Each of these connections then is handled as a separate pair of input source / output sink, i.e. the specified input parser reads from each connection and the resulting outputs are written back to the client, all completely transparent to the translation modules. For example, a <code>ltl2dpa</code> server is started by writing <code>% owl-server  ltl --- simplify-ltl --- ltl2dpa --- hoa</code> Sending input is as easy as <code>nc localhost 5050</code> and starting to type. We also provide a small C utility <code>owl-client</code> dedicated to this purpose for users without access to <code>netcat</code>. This allows easy usage as a fast back-end server, since the JVM does not have to start for each input.</li>
+</ul>
+</body>
+</html>

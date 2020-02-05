@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+# Check if library has already been built.
+if [ -f "lib/" ]; then
+  echo "lib/ folder already exists; nothing to build."
+  exit
+fi
+mkdir -p lib/
+
+# Check if everything is installed
+res=0
+gradle --version >> /dev/null
+if [ $? -ne 0 ]; then
+  echo "Gradle not installed; refer to https://gradle.org/install for installation instructions." >&2
+  res=1
+fi
+
+mvn --version >> /dev/null
+if [ $? -ne 0 ]; then
+  echo "Maven not installed; refer to http://maven.apache.org/install.html for installation instructions." >&2
+  res=1
+fi
+
+if [[ -f "/usr/share/javacc.jar" ]] || [[ -f "/usr/share/JavaCC.zip" ]] || [[ -f "${JAVACC_HOME}/javacc.jar" ]] || [[ -f "${JAVACC_HOME} /JavaCC.zip" ]]
+then
+  :
+else 
+  echo "JavaCC cannot be found; refer to https://github.com/javacc/javacc#download for installation instructions."
+  res=1
+fi
+
+if [ $res -ne 0 ]; then 
+  echo "Some tools not installed;  try again after installing them."
+  exit
+else 
+  echo "Found all necessary tools, start the building process."
+fi 
+
+cd dependencies
+
+cd automatalib
+echo "Building automatalib with maven."
+mvn clean package -Pbundles -Dmaven.javadoc.skip=true >> /dev/null
+cd .. # back to dependencies
+
+cd owl-19.06.03
+echo "Initializing gradle for owl."
+gradle init --type java-library --dsl groovy --test-framework junit --project-name owl --package owl
+echo "Building owl with gradle."
+./gradlew jar >> /dev/null
+cd .. # back to dependencies
+
+cd rltl2ltl
+echo "Building rltl2ltl with ant."
+ant jar  >> /dev/null
+cd .. # back to dependencies
+
+cd .. # back to root
+
+# Move jars to lib/.
+echo "Moving generated jar files to lib/ folder."
+for i in dependencies/owl-19.06.03/lib/*.jar; do
+    [ -f "$i" ] || break
+    mv "$i" lib/
+done
+for i in dependencies/automatalib/distribution/target/bundles/*.jar; do
+    [ -f "$i" ] || break
+    mv "$i" lib/
+done
+mv dependencies/rltl2ltl/rltl2ltl.jar lib/
+
+
+
+
+
