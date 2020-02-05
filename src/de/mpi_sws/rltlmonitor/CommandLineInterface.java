@@ -11,8 +11,8 @@ import java.util.function.Consumer;
 
 import org.mpi_sws.rltl.parser.ParseException;
 
-import net.automatalib.automata.transout.impl.FastMoore;
-import net.automatalib.automata.transout.impl.FastMooreState;
+import net.automatalib.automata.transducers.impl.FastMoore;
+import net.automatalib.automata.transducers.impl.FastMooreState;
 
 /**
  * Command line interface for the (r)LTL monitor constructor.

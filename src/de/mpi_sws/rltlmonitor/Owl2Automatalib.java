@@ -8,8 +8,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import de.tum.in.naturals.bitset.BitSets;
-import net.automatalib.automata.transout.impl.FastMoore;
-import net.automatalib.automata.transout.impl.FastMooreState;
+import net.automatalib.automata.transducers.impl.FastMoore;
+import net.automatalib.automata.transducers.impl.FastMooreState;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.Alphabets;
 import owl.automaton.Automaton;

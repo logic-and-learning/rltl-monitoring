@@ -7,12 +7,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 import java.util.Set;
 
+import net.automatalib.automata.transducers.impl.FastMoore;
 import org.mpi_sws.rltl.parser.LTLParser;
 import org.mpi_sws.rltl.parser.ParseException;
 import org.mpi_sws.rltl.visitors.PrettyPrintVisitor;
 import org.mpi_sws.rltl.visitors.RLTL2LTLVisitor;
 
-import net.automatalib.automata.transout.impl.FastMoore;
 import net.automatalib.util.automata.Automata;
 import owl.automaton.Automaton;
 import owl.automaton.AutomatonUtil;
