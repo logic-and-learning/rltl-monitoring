@@ -1,0 +1,197 @@
+{
+    "dataset": {
+        "XL": [
+            {
+                "name": "base",
+                "determinize": true
+            },
+            {
+                "name": "regressions",
+                "determinize": true
+            },
+            "size",
+            "fgx",
+            "check",
+            "literature-dwyerac-patterns",
+            "literature-etessamih-patterns",
+            "literature-liberouter-patterns",
+            "literature-parametrised",
+            "literature-pelanek-patterns",
+            "literature-sickertejk-patterns",
+            "literature-somenzib-patterns"
+        ],
+        "L": [
+            {
+                "name": "base",
+                "determinize": true
+            },
+            {
+                "name": "regressions",
+                "determinize": true
+            },
+            "size",
+            "fgx",
+            "check",
+            "literature-dwyerac-patterns",
+            "literature-etessamih-patterns",
+            "literature-parametrised",
+            "literature-pelanek-patterns",
+            "literature-sickertejk-patterns",
+            "literature-somenzib-patterns"
+        ],
+        "M": [
+            {
+                "name": "base",
+                "determinize": true
+            },
+            {
+                "name": "regressions",
+                "determinize": true
+            },
+            "size",
+            "fgx"
+        ],
+        "S": [
+            {
+                "name": "base",
+                "determinize": true
+            },
+            {
+                "name": "regressions",
+                "determinize": true
+            }
+        ],
+        "RANDOM": [
+            "random"
+        ]
+    },
+    "defaults": {
+        "reference": {
+            "name": "ltl2tgba",
+            "exec": [
+                "ltl2tgba",
+                "-H",
+                "-f",
+                "%f"
+            ]
+        },
+        "data": "XL"
+    },
+    "tests": {
+        "ltl2nba": {
+            "tools": [
+                "ltl2nba",
+                "ltl2ngba",
+                "ltl2nba#disable-portfolio",
+                "ltl2ngba#disable-portfolio"
+            ]
+        },
+        "ltl2nba-random": {
+            "tools": [
+                "ltl2nba#disable-portfolio",
+                "ltl2ngba#disable-portfolio"
+            ],
+            "data": "RANDOM"
+        },
+        "ltl2ldba": {
+            "tools": [
+                "ltl2ldba#asymmetric",
+                "ltl2ldba#symmetric",
+                "ltl2ldgba#asymmetric",
+                "ltl2ldgba#symmetric",
+                "ltl2ldba#asymmetric,disable-portfolio",
+                "ltl2ldba#symmetric,disable-portfolio",
+                "ltl2ldgba#asymmetric,disable-portfolio",
+                "ltl2ldgba#symmetric,disable-portfolio"
+            ]
+        },
+        "ltl2ldba-random": {
+            "tools": [
+                "ltl2ldba#asymmetric,disable-portfolio",
+                "ltl2ldba#symmetric,disable-portfolio",
+                "ltl2ldgba#asymmetric,disable-portfolio",
+                "ltl2ldgba#symmetric,disable-portfolio"
+            ],
+            "data": "RANDOM"
+        },
+        "ltl2dra": {
+            "tools": [
+                "ltl2dra#symmetric",
+                "ltl2dgra#symmetric",
+                "ltl2dra#symmetric,disable-portfolio",
+                "ltl2dgra#symmetric,disable-portfolio"
+            ],
+            "data": "L"
+        },
+        "ltl2dra-random": {
+            "tools": [
+                "ltl2dra#symmetric,disable-portfolio",
+                "ltl2dgra#symmetric,disable-portfolio"
+            ],
+            "data": "RANDOM"
+        },
+        "ltl2dpa": {
+            "tools": [
+                "ltl2dpa#asymmetric",
+                "ltl2dpa#asymmetric,disable-complement",
+                "ltl2dpa#symmetric",
+                "ltl2dpa#symmetric,disable-complement",
+                "ltl2dpa#asymmetric,disable-portfolio",
+                "ltl2dpa#asymmetric,disable-complement,disable-portfolio",
+                "ltl2dpa#symmetric,disable-portfolio",
+                "ltl2dpa#symmetric,disable-complement,disable-portfolio"
+            ],
+            "data": "L"
+        },
+        "ltl2dpa-random": {
+            "tools": [
+                "ltl2dpa#asymmetric,disable-complement",
+                "ltl2dpa#symmetric,disable-complement"
+            ],
+            "data": "RANDOM"
+        },
+        "ltl2da": "ltl2da",
+        "ltl2na": "ltl2na",
+        "nba2ldba": {
+            "tools": [
+                "spot-nba2ldba"
+            ],
+            "data": "S"
+        },
+        "nba2dpa": {
+            "tools": [
+                "spot-nba2dpa"
+            ],
+            "data": "S"
+        },
+        "delag": {
+            "tools": [
+                "delag",
+                "delag#fallback-spot",
+                "delag-normalform",
+                "delag-normalform#dual",
+                "delag-normalform#local",
+                "delag-normalform#dual,local"
+            ],
+            "data": "M"
+        },
+        "rabinizer": {
+            "tools": [
+                "ltl2dgra#asymmetric,disable-portfolio",
+                "ltl2dra#asymmetric,disable-portfolio",
+                "rabinizer-dpa#asymmetric"
+            ],
+            "data": "M"
+        },
+        "ltl2dpa-convert": {
+            "tools": [
+                "ltl2dpa-convert#min",
+                "ltl2dpa-convert#even",
+                "ltl2dpa-convert#odd",
+                "ltl2dpa-convert#min,even",
+                "ltl2dpa-convert#min,odd"
+            ],
+            "data": "S"
+        }
+    }
+}

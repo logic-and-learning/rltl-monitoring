@@ -1,0 +1,241 @@
+{
+    "tools": {
+        "ltl2nba": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2nba",
+            "flags": {
+                "disable-portfolio": "--disable-portfolio"
+            },
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "ltl2ngba": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2ngba",
+            "flags": {
+                "disable-portfolio": "--disable-portfolio"
+            },
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "ltl2ldba": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2ldba",
+            "flags": {
+                "asymmetric": "--asymmetric",
+                "symmetric": "--symmetric",
+                "disable-portfolio": "--disable-portfolio"
+            },
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "ltl2ldgba": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2ldgba",
+            "flags": {
+                "asymmetric": "--asymmetric",
+                "symmetric": "--symmetric",
+                "disable-portfolio": "--disable-portfolio"
+            },
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "ltl2dpa": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2dpa",
+            "flags": {
+                "asymmetric": "--asymmetric",
+                "symmetric": "--symmetric",
+                "disable-complement": "--disable-complement",
+                "disable-portfolio": "--disable-portfolio"
+            },
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "ltl2dra": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2dra",
+            "flags": {
+                "asymmetric": "--asymmetric",
+                "symmetric": "--symmetric",
+                "disable-portfolio": "--disable-portfolio"
+            },
+            "pre": [
+                "simplify-ltl"
+            ],
+            "post": [
+                "optimize-aut"
+            ]
+        },
+        "ltl2dgra": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2dgra",
+            "flags": {
+                "asymmetric": "--asymmetric",
+                "symmetric": "--symmetric",
+                "disable-portfolio": "--disable-portfolio"
+            },
+            "pre": [
+                "simplify-ltl"
+            ],
+            "post": [
+                "optimize-aut"
+            ]
+        },
+        "ltl2da": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2da",
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "ltl2na": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2na",
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "delag": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "delag",
+            "flags": {
+                "strict": "--fallback=none",
+                "fallback-spot": "--fallback=ltl2tgba -H --deterministic --generic"
+            },
+            "exclusive-flags": [
+                [
+                    "strict",
+                    "fallback-spot"
+                ]
+            ],
+            "pre": [
+                "simplify-ltl"
+            ]
+        },
+        "delag-normalform": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2normalform",
+            "flags": {
+              "dual": "--dual",
+              "local": "--local"
+            },
+            "pre": [
+                "simplify-ltl"
+            ],
+            "post": [
+                "simplify-ltl",
+                "delag"
+            ]
+        },
+        "rabinizer-dpa": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "ltl2dgra",
+            "flags": {
+                "asymmetric": "--asymmetric"
+            },
+            "pre": [
+                "simplify-ltl"
+            ],
+            "post": [
+                "optimize-aut",
+                "dgra2dra",
+                "dra2dpa",
+                "optimize-aut"
+            ]
+        },
+        "spot-nba2ldba": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "nba2ldba",
+            "pre": [
+                "simplify-ltl",
+                [
+                    "ltl2aut-ext",
+                    "-t",
+                    "ltl2tgba -H"
+                ]
+            ]
+        },
+        "spot-nba2dpa": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "nba2dpa",
+            "pre": [
+                "simplify-ltl",
+                [
+                    "ltl2aut-ext",
+                    "-t",
+                    "ltl2tgba -H"
+                ]
+            ],
+            "post": [
+                "optimize-aut"
+            ]
+        },
+        "ltl2tgba": {
+            "type": "spot",
+            "executable": "ltl2tgba",
+            "defaults": [
+                "hoaf"
+            ],
+            "flags": {
+                "hoaf": "--hoaf=1.1"
+            }
+        },
+        "ltl2dpa-convert": {
+            "type": "owl",
+            "input": "ltl",
+            "output": "hoa",
+            "name": "convert-parity",
+            "flags": {
+                "max": "--max",
+                "min": "--min",
+                "even": "--even",
+                "odd": "--odd"
+            },
+            "pre": [
+                "simplify-ltl",
+                "ltl2dpa"
+            ],
+            "post": [
+                "complement-parity",
+                "optimize-aut",
+                "complement-parity"
+            ]
+        }
+    },
+    "aliases": {
+    }
+}

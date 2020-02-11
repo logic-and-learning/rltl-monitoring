@@ -36,34 +36,34 @@ else
   echo "Found all necessary tools, start the building process."
 fi 
 
-cd dependencies
+cd lib_sources
 
 cd automatalib
 echo "Building automatalib with maven."
 mvn clean package -Pbundles -Dmaven.javadoc.skip=true >> /dev/null
-cd .. # back to dependencies
+cd .. # back to lib_sources
 
 cd owl
 echo "Building owl with gradle."
 ./gradlew distZip >> /dev/null
-cd .. # back to dependencies
+cd .. # back to lib_sources
 
 cd rltl2ltl
 echo "Building rltl2ltl with ant."
 ant jar  >> /dev/null
-cd .. # back to dependencies
+cd .. # back to lib_sources
 
 cd .. # back to root
 
 # Move jars to lib/.
 echo "Moving generated jar files to lib/ folder."
-mv dependencies/owl/build/distributions/owl-20.XX-development.zip lib/
+mv lib_sources/owl/build/distributions/owl-20.XX-development.zip lib/
 
-for i in dependencies/automatalib/distribution/target/bundles/*.jar; do
+for i in lib_sources/automatalib/distribution/target/bundles/*.jar; do
     [ -f "$i" ] || break
     mv "$i" lib/
 done
-mv dependencies/rltl2ltl/rltl2ltl.jar lib/
+mv lib_sources/rltl2ltl/rltl2ltl.jar lib/
 
 
 

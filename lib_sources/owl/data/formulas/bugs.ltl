@@ -1,0 +1,8 @@
+// ltl2ldba (asymmetric) - BDD assertion error
+((X(f)) U ((a) W (c))) R ((e) xor ((F((X(e)) R ((a) <-> (F(d))))) W ((a) & (c))))
+
+// ltl2dra (symmetric) - BDD assertion error
+(G(!((F(a)) xor (((G(b)) M (!(b))) xor ((d) R ((e) W (b))))))) R (!(f))
+
+// ltl2tgba (spot)
+a & X(b | c | d) & G(!a | !d) & (!d U (d & X((b | c) & XXGa))) & F(a & X(!a & (((b & F(d & Fb)) | (c & F(d & Fc)) | (e & F(d & Fe)) | (f & F(d & Ff))) U a))) & G((!b & !c) | X(e | f)) & G((!b | !c) & (!e | !f))

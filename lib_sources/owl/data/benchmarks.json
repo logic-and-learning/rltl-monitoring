@@ -1,0 +1,42 @@
+{
+    "dataset": {
+        "full": [
+            "base",
+            "regressions",
+            "size",
+            "fgx",
+            "check",
+            "literature-dwyerac-patterns",
+            "literature-etessamih-patterns",
+            "literature-liberouter-patterns",
+            "literature-parametrised",
+            "literature-pelanek-patterns",
+            "literature-sickertejk-patterns",
+            "literature-somenzib-patterns"
+        ],
+        "small": [
+            "base",
+            "regressions"
+        ]
+    },
+    "defaults": {
+        "data": "full",
+        "repeat": 3,
+        "perf": true,
+        "update": false
+    },
+    "benchmark": {
+        "ltl2ldba": "ltl2ldba#symmetric",
+        "ltl2ldba-asym": "ltl2ldba#asymmetric",
+        "ltl2ldgba": "ltl2ldgba#symmetric",
+        "ltl2ldgba-asym": "ltl2ldgba#asymmetric",
+        "ltl2na": "ltl2na",
+        "delag": "delag",
+        "ltl2dpa": "ltl2dpa",
+        "ltl2da": "ltl2da",
+        "ltl2tgba": {
+            "tool": "ltl2tgba",
+            "update": false
+        }
+    }
+}
