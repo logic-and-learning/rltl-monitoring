@@ -1,24 +1,22 @@
 package de.mpi_sws.rltlmonitor;
 
+import net.automatalib.automata.transducers.impl.FastMoore;
+import net.automatalib.util.automata.Automata;
+import org.mpi_sws.rltl.parser.LTLParser;
+import org.mpi_sws.rltl.parser.ParseException;
+import org.mpi_sws.rltl.visitors.PrettyPrintVisitor;
+import org.mpi_sws.rltl.visitors.RLTL2LTLVisitor;
+import owl.automaton.Automaton;
+import owl.ltl.parser.LtlParser;
+import owl.run.Environment;
+import owl.translations.ltl2dpa.LTL2DPAFunction;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
-import java.util.Set;
-
-import net.automatalib.automata.transducers.impl.FastMoore;
-import org.mpi_sws.rltl.parser.LTLParser;
-import org.mpi_sws.rltl.parser.ParseException;
-import org.mpi_sws.rltl.visitors.PrettyPrintVisitor;
-import org.mpi_sws.rltl.visitors.RLTL2LTLVisitor;
-
-import net.automatalib.util.automata.Automata;
-import owl.automaton.Automaton;
-import owl.automaton.AutomatonUtil;
-import owl.ltl.parser.LtlParser;
-import owl.run.DefaultEnvironment;
-import owl.translations.ltl2dpa.LTL2DPAFunction;
+import java.util.EnumSet;
 
 /**
  * This class implements the (r)LTL monitor construction.
@@ -51,14 +49,20 @@ public class MonitorConstructor {
 		//
 		// Owl automaton for negated formula
 		//
-		var environment = DefaultEnvironment.standard();
-		var translator = new LTL2DPAFunction(environment,
-				Set.of(LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE, LTL2DPAFunction.Configuration.COMPLETE,
-						LTL2DPAFunction.Configuration.EXISTS_SAFETY_CORE,
-						LTL2DPAFunction.Configuration.COMPRESS_COLOURS));
+		var environment = Environment.standard();
+		var translator = new LTL2DPAFunction(environment, EnumSet.of(
+				LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE,
+				LTL2DPAFunction.Configuration.COMPRESS_COLOURS
+		));
+//		var translator = new LTL2DPAFunction(environment,
+//				Set.of(LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE, LTL2DPAFunction.Configuration.COMPLETE,
+//						LTL2DPAFunction.Configuration.EXISTS_SAFETY_CORE,
+//						LTL2DPAFunction.Configuration.COMPRESS_COLOURS));
 
-		var negatedOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(negatedLTLFormula)));
-		assert (negatedOwlAutomaton.is(Automaton.Property.COMPLETE));
+		var negatedOwlAutomaton = translator.apply(LtlParser.parse(negatedLTLFormula));
+//		var negatedOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(negatedLTLFormula)));
+		assert negatedOwlAutomaton.is(Automaton.Property.COMPLETE);
+
 		System.out.println("Negated formula: " + negatedLTLFormula);
 		System.out.println("\n---------- Start Owl automaton ----------");
 		System.out.println(owl.automaton.output.HoaPrinter.toString(negatedOwlAutomaton));
@@ -71,7 +75,7 @@ public class MonitorConstructor {
 		//
 		// Convert to Moore machine
 		//
-		var negatedMachine = Owl2Automatalib.toAutomatalib(negatedOwlAutomaton, 0);
+		var negatedMachine = Owl2Automatalib.toAutomatalib((Automaton<Object, ?>) negatedOwlAutomaton, 0);
 		System.out.println("\n---------- Start Moore machine ----------");
 		System.out.println(Owl2Automatalib.toDot(negatedMachine));
 		System.out.println("---------- End Moore machine ----------");
@@ -87,7 +91,8 @@ public class MonitorConstructor {
 		//
 		// Owl automaton for original formula
 		//
-		var originalOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(parsedLTLFormula)));
+//		var originalOwlAutomaton = AutomatonUtil.cast(translator.apply(LtlParser.parse(parsedLTLFormula)));
+		var originalOwlAutomaton = translator.apply(LtlParser.parse(parsedLTLFormula));
 		assert (originalOwlAutomaton.is(Automaton.Property.COMPLETE));
 		System.out.println("Original formula: " + parsedLTLFormula);
 		System.out.println("\n---------- Start Owl automaton ----------");
@@ -101,7 +106,7 @@ public class MonitorConstructor {
 		//
 		// Convert to Moore machine
 		//
-		var originalMachine = Owl2Automatalib.toAutomatalib(originalOwlAutomaton, 1);
+		var originalMachine = Owl2Automatalib.toAutomatalib((Automaton<Object, ?>) originalOwlAutomaton, 1);
 		System.out.println("\n---------- Start Moore machine ----------");
 		System.out.println(Owl2Automatalib.toDot(originalMachine));
 		System.out.println("---------- End Moore machine ----------");
@@ -197,14 +202,19 @@ public class MonitorConstructor {
 			// EnumSet.allOf(owl.translations.LTL2DAFunction.Constructions.class));
 			// var translator = new LTL2DAFunction(DefaultEnvironment.standard(), false,
 			// EnumSet.of(LTL2DAFunction.Constructions.RABIN));
-			var environment = DefaultEnvironment.standard();
-			var translator = new LTL2DPAFunction(environment,
-					Set.of(LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE, LTL2DPAFunction.Configuration.COMPLETE,
-							LTL2DPAFunction.Configuration.EXISTS_SAFETY_CORE,
-							LTL2DPAFunction.Configuration.COMPRESS_COLOURS));
+			var environment = Environment.standard();
+			var translator = new LTL2DPAFunction(environment, EnumSet.of(
+					LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE,
+					LTL2DPAFunction.Configuration.COMPRESS_COLOURS
+			));
+//			var translator = new LTL2DPAFunction(environment,
+//					Set.of(LTL2DPAFunction.Configuration.OPTIMISE_INITIAL_STATE, LTL2DPAFunction.Configuration.COMPLETE,
+//							LTL2DPAFunction.Configuration.EXISTS_SAFETY_CORE,
+//							LTL2DPAFunction.Configuration.COMPRESS_COLOURS));
 
-			var owlAutomaton = owl.automaton.AutomatonUtil
-					.cast(translator.apply(owl.ltl.parser.LtlParser.parse(ltlString)));
+//			var owlAutomaton = owl.automaton.AutomatonUtil.
+//					.cast(translator.apply(owl.ltl.parser.LtlParser.parse(ltlString)));
+			var owlAutomaton = translator.apply(owl.ltl.parser.LtlParser.parse(ltlString));
 			assert (owlAutomaton.is(Automaton.Property.COMPLETE));
 			System.out.println("\n---------- Start Owl automaton ----------");
 			System.out.println(owl.automaton.output.HoaPrinter.toString(owlAutomaton));
@@ -217,7 +227,7 @@ public class MonitorConstructor {
 			//
 			// Convert to Moore machine
 			//
-			var automatalibMachine = Owl2Automatalib.toAutomatalib(owlAutomaton, truthValue);
+			var automatalibMachine = Owl2Automatalib.toAutomatalib((Automaton<Object, ?>) owlAutomaton, truthValue);
 			System.out.println("\n---------- Start Moore machine ----------");
 			System.out.println(Owl2Automatalib.toDot(automatalibMachine));
 			System.out.println("---------- End Moore machine ----------");

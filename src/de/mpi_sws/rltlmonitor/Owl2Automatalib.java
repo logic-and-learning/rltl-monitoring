@@ -14,7 +14,7 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.Alphabets;
 import owl.automaton.Automaton;
 import owl.automaton.Views;
-import owl.automaton.algorithms.EmptinessCheck;
+import owl.automaton.algorithms.LanguageEmptiness;
 
 public class Owl2Automatalib {
 
@@ -148,7 +148,7 @@ public class Owl2Automatalib {
 				var changedInitialStateAutomaton = Views.replaceInitialState(owlAutomaton, Set.of(owlState));
 
 				// Check whether language from this state is empty
-				if (!EmptinessCheck.isEmpty(changedInitialStateAutomaton)) {
+				if (!LanguageEmptiness.isEmpty(changedInitialStateAutomaton)) {
 					automatalibState.getOutput().set(output);
 				}
 

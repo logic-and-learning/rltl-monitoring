@@ -45,7 +45,7 @@ cd .. # back to lib_sources
 
 cd owl
 echo "Building owl with gradle."
-./gradlew distZip >> /dev/null
+./gradlew minimizedDistZip >> /dev/null
 cd .. # back to lib_sources
 
 cd rltl2ltl
@@ -57,7 +57,11 @@ cd .. # back to root
 
 # Move jars to lib/.
 echo "Moving generated jar files to lib/ folder."
-mv lib_sources/owl/build/distributions/owl-20.XX-development.zip lib/
+mv lib_sources/owl/build/distributions/owl-minimized-20.XX-development.zip lib/owl.zip
+cd lib 
+unzip owl.zip
+mv owl-minimized-20.XX-development/lib/owl-20.XX-development-all.jar owl.jar
+cd ..
 
 for i in lib_sources/automatalib/distribution/target/bundles/*.jar; do
     [ -f "$i" ] || break
@@ -70,4 +74,4 @@ mv lib_sources/rltl2ltl/rltl2ltl.jar lib/
 
 # git clone https://gitlab.lrz.de/i7/owl.git
 # remove line 292 in owl/build.gradle
-# require jdk 12, download from https://jdk.java.net/13/  move at proper location. On mac use brew cask install java, when permission error, navigate to system preferences, security & privacy, in general tab, allow for running openjdk
+# require jdk 12, download from https://jdk.java.net/13/  move to proper location. On mac use brew cask install java, when permission error, navigate to system preferences, security & privacy, in general tab, allow for running openjdk
