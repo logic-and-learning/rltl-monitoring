@@ -43,11 +43,9 @@ echo "Building automatalib with maven."
 mvn clean package -Pbundles -Dmaven.javadoc.skip=true >> /dev/null
 cd .. # back to dependencies
 
-cd owl-19.06.03
-echo "Initializing gradle for owl."
-gradle init --type java-library --dsl groovy --test-framework junit --project-name owl --package owl
+cd owl
 echo "Building owl with gradle."
-./gradlew jar >> /dev/null
+./gradlew distZip >> /dev/null
 cd .. # back to dependencies
 
 cd rltl2ltl
@@ -59,10 +57,8 @@ cd .. # back to root
 
 # Move jars to lib/.
 echo "Moving generated jar files to lib/ folder."
-for i in dependencies/owl-19.06.03/lib/*.jar; do
-    [ -f "$i" ] || break
-    mv "$i" lib/
-done
+mv dependencies/owl/build/distributions/owl-20.XX-development.zip lib/
+
 for i in dependencies/automatalib/distribution/target/bundles/*.jar; do
     [ -f "$i" ] || break
     mv "$i" lib/
@@ -72,4 +68,6 @@ mv dependencies/rltl2ltl/rltl2ltl.jar lib/
 
 
 
-
+# git clone https://gitlab.lrz.de/i7/owl.git
+# remove line 292 in owl/build.gradle
+# require jdk 12, download from https://jdk.java.net/13/  move at proper location. On mac use brew cask install java, when permission error, navigate to system preferences, security & privacy, in general tab, allow for running openjdk
